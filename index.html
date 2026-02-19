@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tirth Joshi — Crafted Excellence</title>
+  <meta name="description"
+    content="Tirth Joshi — Premium artisan coffee experience. Explore our curated collection of luxury coffee blends." />
+  <meta name="theme-color" content="#0f0f0f" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            outfit: ['Outfit', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            obsidian: '#0f0f0f',
+            caramel: '#8B5E3C',
+            matcha: '#4A6741',
+            midnight: '#1a2744',
+            footer: '#0a0a0a',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- ES Module Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js"
+    }
+  }
+  </script>
+</head>
+
+<body class="bg-obsidian text-white font-inter overflow-x-hidden">
+
+  <!-- Fixed WebGL Canvas -->
+  <canvas id="webgl"></canvas>
+
+  <!-- Floating Particles Container -->
+  <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- Scroll Progress Bar -->
+  <div id="scroll-progress"
+    class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-amber-400 via-orange-400 to-amber-300 z-50 transition-none"
+    style="width: 0%"></div>
+
+  <!-- Section Indicator Dots -->
+  <div id="section-dots" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+    <a href="#hero" class="dot active" data-section="0" aria-label="Hero Section">
+      <span class="dot-inner"></span>
+    </a>
+    <a href="#caramel" class="dot" data-section="1" aria-label="Caramel Section">
+      <span class="dot-inner"></span>
+    </a>
+    <a href="#matcha" class="dot" data-section="2" aria-label="Matcha Section">
+      <span class="dot-inner"></span>
+    </a>
+    <a href="#coldbrew" class="dot" data-section="3" aria-label="Cold Brew Section">
+      <span class="dot-inner"></span>
+    </a>
+    <a href="#shop" class="dot" data-section="4" aria-label="Shop Section">
+      <span class="dot-inner"></span>
+    </a>
+  </div>
+
+  <!-- Loading Screen -->
+  <div id="loader" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-obsidian">
+    <div class="loader-content text-center">
+      <h2 class="font-outfit text-2xl sm:text-3xl font-light tracking-[0.3em] mb-8 text-white/80">TIRTH JOSHI</h2>
+      <div class="w-36 sm:w-48 h-[2px] bg-white/10 rounded-full overflow-hidden mx-auto">
+        <div id="loader-bar"
+          class="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all duration-300"
+          style="width: 0%"></div>
+      </div>
+      <p id="loader-text" class="mt-4 text-xs sm:text-sm text-white/40 tracking-widest font-light">LOADING</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-4 sm:py-5 flex items-center justify-between">
+      <a href="#hero" class="font-outfit text-lg sm:text-xl font-semibold tracking-[0.15em] text-white nav-brand">
+        TIRTH JOSHI
+      </a>
+      <div class="hidden md:flex items-center gap-6 lg:gap-8">
+        <a href="#hero"
+          class="nav-link text-xs lg:text-sm tracking-[0.12em] text-white/60 hover:text-white transition-colors duration-300 font-light">HOME</a>
+        <a href="#caramel"
+          class="nav-link text-xs lg:text-sm tracking-[0.12em] text-white/60 hover:text-white transition-colors duration-300 font-light">CARAMEL</a>
+        <a href="#matcha"
+          class="nav-link text-xs lg:text-sm tracking-[0.12em] text-white/60 hover:text-white transition-colors duration-300 font-light">MATCHA</a>
+        <a href="#coldbrew"
+          class="nav-link text-xs lg:text-sm tracking-[0.12em] text-white/60 hover:text-white transition-colors duration-300 font-light">COLD
+          BREW</a>
+        <a href="#shop"
+          class="nav-link glass-btn text-xs lg:text-sm tracking-[0.12em] px-4 lg:px-5 py-2 rounded-full text-white/80 hover:text-white transition-all duration-300 font-light">SHOP</a>
+      </div>
+      <!-- Mobile Menu Toggle -->
+      <button id="mobile-toggle" class="md:hidden text-white/60 hover:text-white transition-colors p-2"
+        aria-label="Toggle menu">
+        <svg id="menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.5" class="transition-transform duration-300">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden mobile-menu-closed">
+      <div class="glass-panel mx-4 mb-4 rounded-2xl p-6 flex flex-col gap-4">
+        <a href="#hero"
+          class="mobile-nav-link text-sm tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 font-light py-2">HOME</a>
+        <a href="#caramel"
+          class="mobile-nav-link text-sm tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 font-light py-2">CARAMEL</a>
+        <a href="#matcha"
+          class="mobile-nav-link text-sm tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 font-light py-2">MATCHA</a>
+        <a href="#coldbrew"
+          class="mobile-nav-link text-sm tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 font-light py-2">COLD
+          BREW</a>
+        <a href="#shop"
+          class="mobile-nav-link glass-btn text-sm tracking-[0.12em] px-5 py-3 rounded-full text-white/80 hover:text-white transition-all duration-300 font-light text-center mt-2">SHOP
+          NOW</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== SECTIONS ===== -->
+
+  <!-- Section 1: Hero -->
+  <section id="hero" class="section relative flex items-center justify-center" data-bg="#0f0f0f">
+    <div class="text-center z-10 px-4 sm:px-6">
+      <p
+        class="anim-chars text-[10px] sm:text-sm md:text-base tracking-[0.3em] sm:tracking-[0.4em] text-white/40 font-light mb-3 sm:mb-4 uppercase">
+        Est. 2024 — Artisan Coffee</p>
+      <h1 class="font-outfit text-[clamp(3rem,10vw,9rem)] font-800 leading-[0.9] tracking-tight mb-4 sm:mb-6">
+        <span class="anim-chars block">Tirth</span>
+        <span
+          class="anim-fade block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400">Joshi</span>
+      </h1>
+      <p class="anim-fade text-base sm:text-lg md:text-xl text-white/50 font-light tracking-wide max-w-md mx-auto">
+        Crafted Excellence</p>
+      <div class="anim-fade mt-8 sm:mt-10">
+        <div class="scroll-hint inline-flex items-center gap-2 text-white/30 text-xs sm:text-sm tracking-widest">
+          <span>SCROLL</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 5v14m-7-7l7 7 7-7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Caramel Macchiato — Card LEFT, Cup RIGHT -->
+  <section id="caramel" class="section relative flex items-center" data-bg="#2C1A0E">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
+      <div class="md:mr-auto md:w-1/2 lg:w-2/5">
+        <div class="glass-panel tilt-card p-6 sm:p-8 md:p-10 rounded-2xl relative"
+          style="transform: perspective(800px) rotateY(3deg) rotateX(-1deg);">
+          <div
+            class="section-num absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-400 text-xs sm:text-sm font-outfit font-bold">
+            01</div>
+          <span
+            class="anim-chars text-[10px] sm:text-xs tracking-[0.3em] text-amber-400/70 font-medium uppercase">Signature
+            Blend</span>
+          <h2
+            class="anim-chars font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6 leading-tight">
+            Caramel<br />Macchiato
+          </h2>
+          <p class="anim-fade text-white/50 font-light leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
+            Velvety steamed milk marbled with rich espresso, crowned with a buttery caramel drizzle.
+            Each sip unfolds layers of toasted sugar and deep-roasted complexity.
+          </p>
+          <div class="anim-fade flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-white/40">
+            <div><span class="text-amber-400 font-semibold text-base sm:text-lg">92°C</span><br />Brew Temp</div>
+            <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+            <div><span class="text-amber-400 font-semibold text-base sm:text-lg">25s</span><br />Extraction</div>
+            <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+            <div><span class="text-amber-400 font-semibold text-base sm:text-lg">18g</span><br />Dose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Matcha Latte — Card RIGHT, Cup LEFT -->
+  <section id="matcha" class="section relative flex items-center" data-bg="#1A2E1A">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
+      <div class="md:ml-auto md:w-1/2 lg:w-2/5">
+        <div class="glass-panel tilt-card p-6 sm:p-8 md:p-10 rounded-2xl relative"
+          style="transform: perspective(800px) rotateY(-3deg) rotateX(-1deg);">
+          <div
+            class="section-num absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-400/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-xs sm:text-sm font-outfit font-bold">
+            02</div>
+          <span
+            class="anim-chars text-[10px] sm:text-xs tracking-[0.3em] text-emerald-400/70 font-medium uppercase">Organic
+            Origin</span>
+          <h2
+            class="anim-chars font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6 leading-tight">
+            Matcha<br />Latte
+          </h2>
+          <p class="anim-fade text-white/50 font-light leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
+            Ceremonial-grade Uji matcha, stone-ground to a silk-fine powder,
+            whisked into creamy oat milk. Earthy, umami-rich, and impossibly smooth.
+          </p>
+          <div class="anim-fade flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-white/40">
+            <div><span class="text-emerald-400 font-semibold text-base sm:text-lg">80°C</span><br />Water Temp</div>
+            <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+            <div><span class="text-emerald-400 font-semibold text-base sm:text-lg">2g</span><br />Matcha</div>
+            <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+            <div><span class="text-emerald-400 font-semibold text-base sm:text-lg">Uji</span><br />Origin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Midnight Cold Brew -->
+  <section id="coldbrew" class="section relative flex items-center justify-center" data-bg="#0D1B2A">
+    <div class="text-center z-10 px-4 sm:px-6 max-w-2xl mx-auto w-full">
+      <div class="glass-panel tilt-card p-6 sm:p-10 md:p-14 rounded-2xl sm:rounded-3xl relative">
+        <div
+          class="section-num absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-sky-400/20 border border-sky-400/30 flex items-center justify-center text-sky-400 text-xs sm:text-sm font-outfit font-bold">
+          03</div>
+        <span class="anim-chars text-[10px] sm:text-xs tracking-[0.3em] text-sky-400/70 font-medium uppercase">Dark
+          Reserve</span>
+        <h2
+          class="anim-chars font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6 leading-tight">
+          Midnight<br />Cold Brew
+        </h2>
+        <p
+          class="anim-fade text-white/50 font-light leading-relaxed mb-4 sm:mb-6 max-w-lg mx-auto text-sm sm:text-base">
+          Steeped for 18 hours in glacier-cold water. A liquid midnight that delivers
+          chocolate, black cherry, and a whisper of dark caramel in every concentrated drop.
+        </p>
+        <div class="anim-fade flex items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-white/40">
+          <div><span class="text-sky-400 font-semibold text-base sm:text-lg">18hr</span><br />Steep</div>
+          <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+          <div><span class="text-sky-400 font-semibold text-base sm:text-lg">4°C</span><br />Cold</div>
+          <div class="w-px h-6 sm:h-8 bg-white/10"></div>
+          <div><span class="text-sky-400 font-semibold text-base sm:text-lg">2x</span><br />Concentrate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Footer / Shop -->
+  <section id="shop" class="section relative flex items-center justify-center" data-bg="#080808">
+    <div class="text-center z-10 px-4 sm:px-6">
+      <p class="anim-chars text-xs sm:text-sm tracking-[0.3em] text-white/30 font-light uppercase mb-3 sm:mb-4">The
+        Collection</p>
+      <h2 class="font-outfit text-[clamp(2.5rem,8vw,8rem)] font-800 mb-6 sm:mb-8 leading-tight">
+        <span class="anim-chars block">Taste</span>
+        <span
+          class="anim-fade block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">Perfection</span>
+      </h2>
+      <p
+        class="anim-fade text-white/40 font-light max-w-sm sm:max-w-md mx-auto mb-8 sm:mb-12 leading-relaxed text-sm sm:text-base">
+        Hand-roasted, single-origin beans delivered to your door. Experience coffee the way it was meant to be.
+      </p>
+      <div class="anim-fade">
+        <button id="order-btn" class="magnetic-btn relative group">
+          <span
+            class="magnetic-btn-inner glass-btn inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3 sm:py-4 rounded-full text-sm sm:text-base font-outfit font-semibold tracking-[0.15em] text-white transition-all duration-500 group-hover:scale-105">
+            ORDER NOW
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              class="transition-transform duration-300 group-hover:translate-x-1">
+              <path d="M5 12h14m-7-7l7 7-7 7" />
+            </svg>
+          </span>
+        </button>
+      </div>
+      <div class="mt-12 sm:mt-20 pt-6 sm:pt-8 border-t border-white/5">
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/20 text-[10px] sm:text-xs tracking-[0.15em] font-light">
+          <p>© 2024 TIRTH JOSHI</p>
+          <div class="hidden sm:block w-px h-3 bg-white/10"></div>
+          <p>ALL RIGHTS RESERVED</p>
+          <div class="hidden sm:block w-px h-3 bg-white/10"></div>
+          <p>CRAFTED WITH ☕</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top"
+    class="fixed bottom-6 right-6 z-40 glass-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center opacity-0 pointer-events-none transition-all duration-500 hover:scale-110"
+    aria-label="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 19V5m-7 7l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Main Script -->
+  <script type="module" src="main.js"></script>
+
+</body>
+
+</html>
