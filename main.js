@@ -6,7 +6,14 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import anime from 'animejs';
+
+// Global cache for Three.js to reuse assets
+THREE.Cache.enabled = true;
+
 
 // ─── CONSTANTS ─────────────────────────────────
 const LERP_FACTOR = 0.055;
@@ -112,14 +119,37 @@ fillLight.position.set(0, -2, 2);
 scene.add(fillLight);
 
 // ─── LOAD MODEL ────────────────────────────────
-const loader = new GLTFLoader();
 const loaderBar = document.getElementById('loader-bar');
 const loaderText = document.getElementById('loader-text');
 const loaderScreen = document.getElementById('loader');
 
-loader.load(
-    'scene.gltf',
-    (gltf) => {
+// 1. Setup DRACO Loader for geometry compression
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+dracoLoader.setDecoderConfig({ type: 'wasm' });
+dracoLoader.preload();
+
+// 2. Setup KTX2 Loader for texture compression support
+const ktx2Loader = new KTX2Loader()
+    .setTranscoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/')
+    .detectSupport(renderer);
+
+// 3. Setup GLTF Loader with cache, Draco, KTX2, and Meshopt decoding
+const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+loader.setKTX2Loader(ktx2Loader);
+loader.setMeshoptDecoder(MeshoptDecoder);
+
+async function initModel() {
+    try {
+        const gltf = await loader.loadAsync('cup.glb', (progress) => {
+            if (progress.total > 0) {
+                const pct = Math.round((progress.loaded / progress.total) * 100);
+                loaderBar.style.width = pct + '%';
+                loaderText.textContent = pct + '%';
+            }
+        });
+
         const model = gltf.scene;
 
         // Center and scale
@@ -140,34 +170,56 @@ loader.load(
         state.model = wrapper;
         state.loaded = true;
 
-        // Enhance materials
+        // Ensure materials & meshes are fully optimized for GPU
         model.traverse((child) => {
             if (child.isMesh) {
-                child.material.envMapIntensity = 0.5;
-                if (child.material.map) {
-                    child.material.map.colorSpace = THREE.SRGBColorSpace;
+                // Disable shadow casting/receiving since we use directional lights only, huge performance win
+                child.castShadow = false;
+                child.receiveShadow = false;
+
+                // Enable frustum culling
+                child.frustumCulled = true;
+
+                // Stop automatic matrix calculations on static geometry parts
+                // The wrapper moves, but the internal geometry pieces relative to the wrapper do not.
+                child.matrixAutoUpdate = false;
+                child.updateMatrix();
+
+                // Simplify materials
+                if (child.material) {
+                    child.material.envMapIntensity = 0.5;
+                    // For mobile devices, lower shader precision
+                    if (IS_MOBILE) {
+                        child.material.precision = 'mediump';
+                    }
+                    if (child.material.map) {
+                        child.material.map.colorSpace = THREE.SRGBColorSpace;
+                    }
                 }
             }
         });
+
+        // Pre-compile the shaders so we don't drop frames when it first renders
+        renderer.compile(scene, camera);
 
         // Hide loader with smooth transition
         setTimeout(() => {
             loaderScreen.classList.add('loaded');
             setTimeout(() => initAnimations(), 300);
         }, 500);
-    },
-    (progress) => {
-        if (progress.total > 0) {
-            const pct = Math.round((progress.loaded / progress.total) * 100);
-            loaderBar.style.width = pct + '%';
-            loaderText.textContent = pct + '%';
-        }
-    },
-    (error) => {
+
+    } catch (error) {
         console.error('Model loading error:', error);
         loaderText.textContent = 'ERROR';
     }
-);
+}
+
+// Lazy loading initiation, let browser paint initial DOM first
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => initModel());
+} else {
+    setTimeout(initModel, 50);
+}
 
 // ─── SCROLL TRACKING ──────────────────────────
 const scrollProgressBar = document.getElementById('scroll-progress');
