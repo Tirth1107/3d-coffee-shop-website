@@ -1,0 +1,496 @@
+/* ========================================
+   TIRTH JOSHI — Premium Coffee Website
+   Enhanced Styles (layered on Tailwind)
+   ======================================== */
+
+/* === Reset & Base === */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  overscroll-behavior: none;
+}
+
+::selection {
+  background: rgba(251, 191, 36, 0.3);
+  color: #fff;
+}
+
+/* === Custom Scrollbar === */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* === Fixed WebGL Canvas === */
+#webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  cursor: grab;
+}
+
+#webgl:active {
+  cursor: grabbing;
+}
+
+/* === Section Defaults === */
+.section {
+  min-height: 100vh;
+  min-height: 100svh;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Allow pointer events on interactive children */
+.section .glass-panel,
+.section .magnetic-btn,
+.section a,
+.section button,
+.section .tilt-card {
+  pointer-events: auto;
+}
+
+/* === Glassmorphism === */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.5s ease;
+}
+
+.glass-panel:hover {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 8px 32px rgba(251, 191, 36, 0.12),
+    0 0 20px rgba(251, 191, 36, 0.06);
+}
+
+/* === Interactive 3D Tilt Cards === */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.5s ease;
+  will-change: transform;
+}
+
+.tilt-card:hover {
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Shine overlay on tilt */
+.tilt-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.02) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.tilt-card:hover::after {
+  opacity: 1;
+}
+
+/* === Navbar === */
+#navbar {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#navbar.scrolled {
+  background: rgba(15, 15, 15, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Nav link underline animation */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* === Mobile Menu === */
+.mobile-menu-closed {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+}
+
+.mobile-menu-open {
+  max-height: 400px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease 0.1s;
+}
+
+.mobile-nav-link {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-nav-link:last-of-type {
+  border-bottom: none;
+}
+
+/* === Section Indicator Dots === */
+.dot {
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dot-inner {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dot.active .dot-inner {
+  width: 8px;
+  height: 8px;
+  background: #fbbf24;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+}
+
+/* === Character Animation Setup === */
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) rotateX(-30deg);
+  transform-origin: bottom center;
+}
+
+.char.revealed {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+
+.char-space {
+  display: inline-block;
+  width: 0.25em;
+}
+
+/* === Fade-up animation targets === */
+.anim-fade {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.anim-fade.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Safety fallback — reveal all text after 4s if JS animation fails */
+@keyframes safetyReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+.char,
+.anim-fade {
+  animation: safetyReveal 0.01s ease forwards;
+  animation-delay: 4s;
+}
+
+/* === Scroll Hint Animation === */
+.scroll-hint {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translateY(8px);
+    opacity: 0.6;
+  }
+}
+
+/* === Magnetic Button === */
+.magnetic-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+.magnetic-btn-inner {
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
+
+/* === Loading Screen === */
+#loader {
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.8s;
+}
+
+#loader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-content {
+  animation: loaderPulse 2s ease-in-out infinite;
+}
+
+@keyframes loaderPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* === Back to Top Button === */
+#back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* === Floating Particles === */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* === Subtle Grain Overlay === */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* === Section Background Glow Orbs === */
+#hero::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(600px, 90vw);
+  height: min(600px, 90vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#caramel::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  right: -5%;
+  width: min(500px, 80vw);
+  height: min(500px, 80vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 94, 60, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#matcha::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: -5%;
+  width: min(500px, 80vw);
+  height: min(500px, 80vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74, 103, 65, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#coldbrew::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(700px, 95vw);
+  height: min(700px, 95vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 130, 202, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Responsive Overrides === */
+@media (max-width: 768px) {
+
+  /* Hide section dots on very small screens */
+  #section-dots {
+    right: 8px;
+    gap: 8px;
+  }
+
+  .dot-inner {
+    width: 5px;
+    height: 5px;
+  }
+
+  .dot.active .dot-inner {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Tilt cards: reduce initial tilt on mobile */
+  .tilt-card {
+    transform: none !important;
+  }
+
+  /* Reduce blur on mobile for performance */
+  .glass-panel {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Section number badges */
+  .section-num {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 10px !important;
+    top: -8px !important;
+    left: -8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #section-dots {
+    display: none;
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* === Touch Device Optimisations === */
+@media (hover: none) {
+  .tilt-card {
+    transform: none !important;
+  }
+
+  .tilt-card::after {
+    display: none;
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+}
+
+/* === Smooth Scroll Sections on iOS === */
+@supports (-webkit-touch-callout: none) {
+  .section {
+    min-height: -webkit-fill-available;
+  }
+}
